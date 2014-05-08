@@ -1,7 +1,4 @@
-ExUnit.start
-
 import Monad
-
 require ErrorM
 
 defmodule ErrorMonadTest do
@@ -66,10 +63,13 @@ defmodule ErrorMonadTest do
     end) == {:error, :some_failure, :more_description}
   end
 
-end
-
-defmodule ListMonadTest do
-  require ExUnit.DocTest
-  use ExUnit.Case, async: true
-  doctest ListM
+  test "error monad raise for tuples other than {:ok, _} and {:error, ...}" do
+    assert_raise FunctionClauseError, fn ->
+      monad ErrorM do
+        a_value <- ErrorMonadTest.error_start()
+        _b_value <- {:incomplete, [], "foo"}
+        return a_value
+      end
+    end
+  end
 end
